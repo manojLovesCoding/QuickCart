@@ -1,0 +1,446 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inngest & Clerk User Sync Documentation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #263247;
+      line-height: 1.7;
+    }
+
+    header {
+      background: #172554;
+      color: white;
+      padding: 45px 8%;
+    }
+
+    header h1 {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: #cbd5e1;
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: 35px auto;
+      padding: 0 20px;
+    }
+
+    section {
+      background: white;
+      padding: 28px;
+      margin-bottom: 25px;
+      border-radius: 10px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      color: #1e40af;
+      margin-bottom: 15px;
+      font-size: 22px;
+    }
+
+    h3 {
+      margin: 20px 0 10px;
+      color: #334155;
+    }
+
+    p {
+      margin-bottom: 12px;
+    }
+
+    ul, ol {
+      padding-left: 25px;
+      margin-bottom: 15px;
+    }
+
+    li {
+      margin-bottom: 7px;
+    }
+
+    code {
+      background: #eaf0ff;
+      color: #1d4ed8;
+      padding: 3px 6px;
+      border-radius: 4px;
+    }
+
+    pre {
+      background: #111827;
+      color: #d1fae5;
+      padding: 18px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+
+    .event {
+      background: #eff6ff;
+      border-left: 4px solid #2563eb;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 5px;
+    }
+
+    .note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 5px;
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .flow div {
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 12px 16px;
+      border-radius: 7px;
+      font-weight: bold;
+    }
+
+    .flow span {
+      color: #64748b;
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      text-align: left;
+    }
+
+    th {
+      background: #eff6ff;
+      color: #1e40af;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background: #172554;
+      color: white;
+    }
+
+    @media(max-width: 600px) {
+      header h1 {
+        font-size: 23px;
+      }
+
+      section {
+        padding: 20px;
+      }
+
+      table {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Inngest & Clerk User Synchronization</h1>
+  <p>Technical Documentation | Next.js | MongoDB | Clerk | Inngest</p>
+</header>
+
+<div class="container">
+
+  <section>
+    <h2>1. Introduction</h2>
+    <p>
+      This module integrates Clerk authentication with MongoDB using Inngest.
+      It automatically synchronizes user information whenever a user is
+      created, updated, or deleted in Clerk.
+    </p>
+
+    <p>
+      Inngest listens for Clerk webhook events and executes the corresponding
+      functions to keep the application database synchronized.
+    </p>
+  </section>
+
+  <section>
+    <h2>2. Technologies Used</h2>
+    <ul>
+      <li><strong>Next.js:</strong> Application framework.</li>
+      <li><strong>Clerk:</strong> User authentication and management.</li>
+      <li><strong>Inngest:</strong> Event-driven background function execution.</li>
+      <li><strong>MongoDB:</strong> Database for storing user information.</li>
+      <li><strong>Mongoose:</strong> MongoDB object modeling.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>3. System Workflow</h2>
+    <p>The synchronization process works as follows:</p>
+
+    <div class="flow">
+      <div>Clerk</div>
+      <span>→</span>
+      <div>Event</div>
+      <span>→</span>
+      <div>Inngest</div>
+      <span>→</span>
+      <div>Function</div>
+      <span>→</span>
+      <div>MongoDB</div>
+    </div>
+
+    <h3>Workflow Explanation</h3>
+    <ol>
+      <li>A user performs an action in Clerk.</li>
+      <li>Clerk generates an event.</li>
+      <li>Inngest receives the event.</li>
+      <li>The matching Inngest function executes.</li>
+      <li>User information is created, updated, or deleted in MongoDB.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>4. Inngest Client Configuration</h2>
+
+    <pre>
+export const inngest = new Inngest({
+  id: "quickcart2-next"
+});
+    </pre>
+
+    <p>
+      This creates an Inngest client for the QuickCart2 Next.js application.
+      The client is used to register background functions and handle events.
+    </p>
+
+    <ul>
+      <li><code>Inngest</code> imports the Inngest SDK.</li>
+      <li><code>id</code> uniquely identifies the application.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>5. User Creation Function</h2>
+
+    <div class="event">
+      <strong>Event:</strong> clerk/user.created
+      <br>
+      <strong>Function ID:</strong> sync-user-from-clerk
+    </div>
+
+    <p>
+      This function executes whenever a new user is created in Clerk.
+      It extracts the user's information and saves it to MongoDB.
+    </p>
+
+    <h3>Data Extracted</h3>
+    <ul>
+      <li>User ID</li>
+      <li>First name</li>
+      <li>Last name</li>
+      <li>Email address</li>
+      <li>Profile image URL</li>
+    </ul>
+
+    <h3>Database Operation</h3>
+    <pre>
+const userData = {
+  _id: id,
+  email: email_addresses[0].email_address,
+  name: first_name + " " + last_name,
+  imageUrl: image_url,
+};
+
+await connectDB();
+await User.create(userData);
+    </pre>
+
+    <p>
+      The extracted information is converted into a MongoDB user document.
+      The Clerk user ID is used as the MongoDB document ID.
+    </p>
+  </section>
+
+  <section>
+    <h2>6. User Update Function</h2>
+
+    <div class="event">
+      <strong>Event:</strong> clerk/user.updated
+      <br>
+      <strong>Function ID:</strong> update-user-from-clerk
+    </div>
+
+    <p>
+      This function executes whenever an existing user updates their profile
+      information in Clerk.
+    </p>
+
+    <h3>Database Operation</h3>
+    <pre>
+await connectDB();
+
+await User.findByIdAndUpdate(id, userData);
+    </pre>
+
+    <p>
+      The function connects to MongoDB and searches for the user using
+      their Clerk ID. It then updates the stored user information.
+    </p>
+  </section>
+
+  <section>
+    <h2>7. User Deletion Function</h2>
+
+    <div class="event">
+      <strong>Event:</strong> clerk/user.deleted
+      <br>
+      <strong>Function ID:</strong> delete-user-from-clerk
+    </div>
+
+    <p>
+      This function executes whenever a user account is deleted from Clerk.
+      It removes the corresponding user document from MongoDB.
+    </p>
+
+    <h3>Database Operation</h3>
+    <pre>
+const { id } = event.data;
+
+await connectDB();
+await User.findByIdAndDelete(id);
+    </pre>
+
+    <p>
+      The Clerk user ID is used to locate and delete the corresponding
+      MongoDB document.
+    </p>
+  </section>
+
+  <section>
+    <h2>8. Event Summary</h2>
+
+    <table>
+      <tr>
+        <th>Event</th>
+        <th>Function</th>
+        <th>Database Action</th>
+      </tr>
+      <tr>
+        <td>clerk/user.created</td>
+        <td>syncUserCreation</td>
+        <td>Create user</td>
+      </tr>
+      <tr>
+        <td>clerk/user.updated</td>
+        <td>syncUserUpdation</td>
+        <td>Update user</td>
+      </tr>
+      <tr>
+        <td>clerk/user.deleted</td>
+        <td>syncUserDeletion</td>
+        <td>Delete user</td>
+      </tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>9. MongoDB User Data Structure</h2>
+
+    <p>The following table describes the user information stored in MongoDB.</p>
+
+    <table>
+      <tr>
+        <th>Field</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td>_id</td>
+        <td>Unique Clerk user ID.</td>
+      </tr>
+      <tr>
+        <td>email</td>
+        <td>User's email address.</td>
+      </tr>
+      <tr>
+        <td>name</td>
+        <td>Combined first and last name.</td>
+      </tr>
+      <tr>
+        <td>imageUrl</td>
+        <td>User's profile image URL.</td>
+      </tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>10. Important Notes</h2>
+
+    <ul>
+      <li>Make sure MongoDB is properly connected before database operations.</li>
+      <li>Configure Clerk webhooks to send events to the Inngest integration.</li>
+      <li>Ensure the Inngest functions are registered with your application.</li>
+      <li>Handle missing email addresses and optional profile fields safely.</li>
+      <li>Use appropriate error handling and logging for production.</li>
+    </ul>
+
+    <div class="note">
+      <strong>Code improvement:</strong>
+      In your original creation function, use
+      <code>await connectDB();</code> before
+      <code>await User.create(userData);</code>.
+      Passing the result of User.create() into connectDB() is likely unintended.
+      Also consider using an upsert for user creation to handle event retries
+      safely.
+    </div>
+  </section>
+
+  <section>
+    <h2>11. Conclusion</h2>
+    <p>
+      This Inngest integration provides automatic synchronization between
+      Clerk and MongoDB. It ensures that user information remains consistent
+      across the authentication system and application database.
+    </p>
+
+    <p>
+      By using event-driven functions, the application can manage user
+      creation, profile updates, and account deletion without manually
+      performing database operations.
+    </p>
+  </section>
+
+</div>
+
+<footer>
+  <p>QuickCart2 | Inngest & Clerk Integration Documentation</p>
+</footer>
+
+</body>
+</html>
